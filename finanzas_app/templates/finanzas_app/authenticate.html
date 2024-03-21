@@ -1,0 +1,59 @@
+
+{% extends 'finanzas_app/base/authentication.html' %} 
+{% load static %}
+
+{% block page_title %}
+    {% if login_attempt %}
+        Iniciar Sesión
+    {% else %}
+        Registrarse
+    {% endif %}
+{% endblock page_title %}
+
+{% block title %}
+    {% if login_attempt %}
+        Iniciar Sesión
+    {% else %}
+        Registrarse
+    {% endif %}
+{% endblock title %}
+
+{% block warning_box %}
+    {% if failed %}
+        <div style="background-color: red; color: white; padding: 10px;">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    {{ error }}
+                    <br>
+                {% endfor %}
+            {% endfor %}
+            
+            {% for error in form.non_field_errors %}
+                {{ error }}
+                <br>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock warning_box %}
+
+{% block auth_form %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-floating mb-3">
+            {{ field }}
+            <label for="{{ field.name }}">{{ field.label }}</label>
+        </div>
+        {% endfor %}
+
+        <div class="d-flex align-items-end flex-column justify-content-between mt-4 mb-2">
+            <button type="submit" class="btn btn-primary">
+            {% if login_attempt %}
+                Log In
+            {% else %}
+                Registrar
+            {% endif %}
+            </button>
+        </div>
+    </form>
+{% endblock auth_form %}

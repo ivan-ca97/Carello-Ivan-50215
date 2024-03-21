@@ -1,0 +1,14 @@
+
+{% extends 'finanzas_app/base/index.html' %} 
+{% load static %} 
+
+{% block dropdown_login %}
+    <li><a class="dropdown-item" href="#!">Hola {{ user.username }}!</a></li>
+
+    {% if user.is_authenticated %}
+        <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
+    {% else  %}
+        <li><a class="dropdown-item" href="{% url 'login' %}">Log In</a></li>
+        <li><a class="dropdown-item" href="{% url 'signup' %}">Sign Up</a></li>
+    {% endif  %}
+{% endblock dropdown_login %}
