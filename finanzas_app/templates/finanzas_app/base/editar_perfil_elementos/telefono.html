@@ -1,0 +1,32 @@
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">Teléfono</h5>
+        
+        <form action="{% url 'perfil' %}" method="POST">
+            {% csrf_token %}
+            
+            {% if form.telefonoEditar.value %}
+                <div class="row g-0">
+                    <div class="col">
+                        {{ form.telefono }}
+                    </div>
+                    <div class="col-auto">
+                        {{ form.telefonoEditar }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="row g-0">
+                    <div class="col">
+                        <fieldset disabled>
+                            <!-- Place your form controls here -->
+                            <input type="text" class="form-control" placeholder="{{ perfilUsuario.telefono }}">
+                        </fieldset>
+                    </div>
+                    <div class="col-auto">
+                        {{ form.telefonoEditar }}
+                    </div>
+                </div>
+            {% endif %}
+        </form>                 
+    </div>
+</div>

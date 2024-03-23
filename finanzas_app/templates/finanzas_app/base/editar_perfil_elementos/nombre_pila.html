@@ -1,0 +1,33 @@
+
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">Nombre/s</h5>
+        
+        <form action="{% url 'perfil' %}" method="POST">
+            {% csrf_token %}
+            
+            {% if form.nombresPilaEditar.value %}
+                <div class="row g-0">
+                    <div class="col">
+                        {{ form.nombresPila }}
+                    </div>
+                    <div class="col-auto">
+                        {{ form.nombresPilaEditar }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="row g-0">
+                    <div class="col">
+                        <fieldset disabled>
+                            <!-- Place your form controls here -->
+                            <input type="text" class="form-control" placeholder="{{ perfilUsuario.nombresPila }}">
+                        </fieldset>
+                    </div>
+                    <div class="col-auto">
+                        {{ form.nombresPilaEditar }}
+                    </div>
+                </div>
+            {% endif %}
+        </form>                 
+    </div>
+</div>   

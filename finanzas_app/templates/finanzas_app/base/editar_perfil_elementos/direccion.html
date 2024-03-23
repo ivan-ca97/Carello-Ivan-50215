@@ -1,0 +1,33 @@
+
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">Dirección</h5>
+        
+        <form action="{% url 'perfil' %}" method="POST">
+            {% csrf_token %}
+            
+            {% if form.direccionEditar.value %}
+                <div class="row g-0">
+                    <div class="col">
+                        {{ form.direccion }}
+                    </div>
+                    <div class="col-auto">
+                        {{ form.direccionEditar }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="row g-0">
+                    <div class="col">
+                        <fieldset disabled>
+                            <!-- Place your form controls here -->
+                            <input type="text" class="form-control" placeholder="{{ perfilUsuario.direccion }}">
+                        </fieldset>
+                    </div>
+                    <div class="col-auto">
+                        {{ form.direccionEditar }}
+                    </div>
+                </div>
+            {% endif %}
+        </form>                 
+    </div>
+</div>   

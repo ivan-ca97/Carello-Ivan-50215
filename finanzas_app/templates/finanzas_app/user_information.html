@@ -1,0 +1,86 @@
+{% extends 'finanzas_app/base/index.html' %} 
+{% load static %} 
+
+{% block dropdown_login %}
+    {% if user.is_authenticated %}
+        <li><h1 class="dropdown-header">Hola {{ user.username }}!</h1></li>
+        <li><a class="dropdown-item" href="{% url 'perfil' %}">Tu perfil</a></li>
+        <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
+    {% else  %}
+        <li><h1 class="dropdown-header">Hola!</h1></li>
+        <li><a class="dropdown-item" href="{% url 'login' %}">Log In</a></li>
+        <li><a class="dropdown-item" href="{% url 'signup' %}">Sign Up</a></li>
+    {% endif  %}
+{% endblock dropdown_login %}
+
+
+{% block content %}
+    {% for field in form %}
+    {{field}}
+    {% endfor%}
+
+
+    <h1 class="mt-4">Tu perfil</h1>
+
+    <div class="row mt-4">
+        <div class="col">
+            {% include 'finanzas_app/base/editar_perfil_elementos/nombre_pila.html' %}
+        </div>
+        
+        <div class="col">
+            {% include 'finanzas_app/base/editar_perfil_elementos/apellido.html' %}
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                <h5 class="card-title">E-Mail</h5>
+                <p class="card-text">{{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            {% include 'finanzas_app/base/editar_perfil_elementos/telefono.html' %}
+        </div>
+        <div class="col">
+            {% include 'finanzas_app/base/editar_perfil_elementos/direccion.html' %}
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+{% endblock content %}
