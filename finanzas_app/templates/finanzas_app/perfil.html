@@ -1,0 +1,58 @@
+{% extends 'finanzas_app/base/index.html' %} 
+{% load static %} 
+
+{% block content %}
+    <h1 class="mt-4">Tu perfil</h1>
+
+    <div class="container">
+        <a class="btn btn-primary" href="{% url 'perfil_editar' %}">Editar</a>    
+    </div>           
+
+    <div class="container">
+        <div class="row">
+            {% for field in form %}
+                <div class="col mt-4">
+                    <div class="card" style="width: 18rem; height: 8rem;">
+                        <div class="card-body">
+                        <h5 class="card-title">{{ field.label }}</h5>
+                        <p class="card-text">{{ field.value }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor%}
+        </div>
+    </div>
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+{% endblock content %}

@@ -1,0 +1,42 @@
+{% extends 'finanzas_app/base/index.html' %} 
+{% load static %} 
+
+
+
+{% block content %}
+    <div class="container mt-5">
+        {% if form.errors %}
+            <div style="background-color: red; color: white; padding: 10px;">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        {{ error }}
+                        <br>
+                    {% endfor %}
+                {% endfor %}
+                
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                    <br>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form action="" method="POST" style="max-width: 30em">
+            {% csrf_token %}
+            <h3>Nueva forma de pago para {{ user.perfilusuario }}:</h3>
+            
+            <div class="d-flex align-items-start flex-column justify-content-between mt-4 mb-2">
+                {% for field in form%}
+                    {{ field.label }}
+                    {{ field }}
+                    <br>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Crear</button>
+            <a type="button" class="btn btn-secondary" href="{% url 'formas_de_pago' %}">Cancelar</a>
+        </form>
+    </div>
+
+
+{% endblock content %}

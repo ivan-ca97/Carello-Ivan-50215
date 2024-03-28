@@ -28,14 +28,16 @@
                                     {% block warning_box %}
                                             
                                     {% endblock warning_box %}
+                                    
                                     <div class="card-body">
                                         {% block auth_form %}
 
                                         {% endblock auth_form %}
                                     </div>
-                                    <div class="card-footer text-center py-3">
-                                        <div class="small"><a href="register.html">Need an account? Sign up!</a></div>
-                                    </div>
+
+                                    {% block input_box_footer %}
+
+                                    {% endblock input_box_footer %}
                                 </div>
                             </div>
                         </div>

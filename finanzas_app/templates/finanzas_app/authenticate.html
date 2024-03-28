@@ -57,3 +57,16 @@
         </div>
     </form>
 {% endblock auth_form %}
+
+
+{% block input_box_footer %}
+    {% if login_attempt %}
+        <div class="card-footer text-center py-3">
+            <div class="small"><a href="{% url 'signup' %}">Necesita una cuenta? Registrese!</a></div>
+        </div>
+    {% else %}
+        <div class="card-footer text-center py-3">
+            <div class="small"><a href="{% url 'login' %}">Ya tiene cuenta? Inicie sesión!</a></div>
+        </div>
+    {% endif %}
+{% endblock input_box_footer %}

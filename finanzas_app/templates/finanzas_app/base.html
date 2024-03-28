@@ -1,28 +1,3 @@
 
 {% extends 'finanzas_app/base/index.html' %} 
 {% load static %} 
-
-
-
-{% block dropdown_login %}
-    {% if user.is_authenticated %}
-        <li><h1 class="dropdown-header">Hola {{ user.username }}!</h1></li>
-        <li><a class="dropdown-item" href="{% url 'perfil' %}">Tu perfil</a></li>
-        <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
-    {% else  %}
-        <li><h1 class="dropdown-header">Hola!</h1></li>
-        <li><a class="dropdown-item" href="{% url 'login' %}">Log In</a></li>
-        <li><a class="dropdown-item" href="{% url 'signup' %}">Sign Up</a></li>
-    {% endif  %}
-{% endblock dropdown_login %}
-
-
-
-{% block side_foot_user_box %}
-    {% if user.is_authenticated %}
-        <div class="sb-sidenav-footer">
-            <div class="small">Sesión iniciada como:</div>
-            {{ user.username }}
-        </div>           
-    {% endif  %}
-{% endblock side_foot_user_box %}

@@ -1,0 +1,76 @@
+{% extends 'finanzas_app/base/index.html' %} 
+{% load static %} 
+
+{% block dropdown_login %}
+    {% if user.is_authenticated %}
+        <li><h1 class="dropdown-header">Hola {{ user.username }}!</h1></li>
+        <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
+    {% else  %}
+        <li><h1 class="dropdown-header">Hola!</h1></li>
+        <li><a class="dropdown-item" href="{% url 'login' %}">Log In</a></li>
+        <li><a class="dropdown-item" href="{% url 'signup' %}">Sign Up</a></li>
+    {% endif  %}
+{% endblock dropdown_login %}
+
+
+{% block content %}
+    <h1 class="mt-4">Tu perfil</h1>
+
+    <form action="{% url 'perfil_editar' %}" method="POST">
+        {% csrf_token %}
+        <div class="container">
+            <button class="btn btn-success" type="submit">Confirmar cambios</button>
+            <button class="btn btn-secondary" href="{% url 'perfil' %}">Volver sin guardar</button>
+        </div>
+
+        <div class="container">
+            <div class="row">
+
+                {% for field in form %}
+                    <div class="col mt-4">
+                        <div class="card" style="width: 18rem; height: 8rem;">
+                            <div class="card-body">
+                            <h5 class="card-title">{{ field.label }}</h5>
+                            {{ field }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor%}
+                
+            </div>
+        </div>
+    </form>
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+{% endblock content %}

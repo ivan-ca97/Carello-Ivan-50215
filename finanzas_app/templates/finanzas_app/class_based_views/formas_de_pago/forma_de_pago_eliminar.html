@@ -1,0 +1,26 @@
+
+{% extends 'finanzas_app/base/index.html' %} 
+{% load static %} 
+
+{% block content %}
+
+
+    <div class="container mt-5">
+        <form action="" method="POST">
+            {% csrf_token %}   
+            <div class="text-center">     
+                <h2>¿Esta seguro de eliminar la forma de pago? <p>
+                    {{ object }}
+                </p> </h2>
+                <p>Esta acción es irreversible</p>
+            </div>
+            <div class="text-center">
+                <input type="submit" class="btn btn-danger btn-block" value="Borrar">
+                <a type="button" class="btn btn-secondary" href="{% url 'cuentas' %}">Cancelar</a>
+            </div>
+        </form>
+    
+    </div>
+
+
+{% endblock content %}
