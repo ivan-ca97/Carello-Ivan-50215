@@ -1,7 +1,20 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import PerfilUsuario, ProveedorPagos, Cuenta, FormaDePago, Ingreso, Egreso
+from .models import PerfilUsuario, ProveedorPagos, Cuenta, FormaDePago, Ingreso, Egreso, Avatar
+
+
+class AvatarForm(forms.ModelForm):
+    class Meta:
+        model = Avatar
+        fields = ['imagen']
+        
+        widgets = {
+            'imagen': forms.FileInput(attrs={
+                'class': 'form-control',
+                'type': 'file',
+            }),
+        }
 
 class LogInForm(AuthenticationForm):
     username = forms.CharField(required = True, label="Nombre de usuario", widget=forms.TextInput(attrs={
@@ -43,7 +56,6 @@ class SignUpForm(UserCreationForm):
         model = User
         fields = ["username", "email", "password1", "password2"]
 
-
 class ProveedorPagosForm(forms.ModelForm):
     class Meta:
         model = ProveedorPagos
@@ -76,35 +88,28 @@ class ProveedorPagosForm(forms.ModelForm):
         }
 
 class PerfilForm(forms.ModelForm):
-    nombresPila = forms.CharField(max_length=100, required=False, label="Nombre", widget = forms.TextInput(attrs={
-        'class': 'form-control',
-        'type': 'text',
-        'aria-label': 'EditarNombre',
-        'aria-describedby': 'btnEditarNombre',
-        'value': None,
-    }))
-    apellido = forms.CharField(max_length=100, required=False, label="Apellido", widget = forms.TextInput(attrs={
-        'class': 'form-control',
-        'type': 'text',
-        'aria-label': 'EditarApellido',
-        'aria-describedby': 'btnEditarApellido',
-    }))
-    direccion = forms.CharField(max_length=100, required=False, label="Dirección", widget = forms.TextInput(attrs={
-        'class': 'form-control',
-        'type': 'text',
-        'aria-label': 'EditarDirección',
-        'aria-describedby': 'btnEditarDirección',
-    }))
-    telefono = forms.CharField(max_length=100, required=False, label="Teléfono", widget = forms.TextInput(attrs={
-        'class': 'form-control',
-        'type': 'text',
-        'aria-label': 'EditarTelefono',
-        'aria-describedby': 'btnEditarTelefono',
-    }))
-
     class Meta:
         model = PerfilUsuario
         fields = ["nombresPila", "apellido", "direccion", "telefono"]
+
+        widgets = {
+            'nombresPila': forms.TextInput(attrs={
+                'class': 'form-control',
+                'type': 'text',
+            }),
+            'apellido': forms.TextInput(attrs={
+                'class': 'form-control',
+                'type': 'text',
+            }),
+            'direccion': forms.TextInput(attrs={
+                'class': 'form-control',
+                'type': 'text',
+            }),
+            'telefono': forms.TextInput(attrs={
+                'class': 'form-control',
+                'type': 'text',
+            }),
+        }
 
 class CuentaForm(forms.ModelForm):
     class Meta:

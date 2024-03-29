@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -128,3 +129,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Agrego para representación de fechas
 DATE_FORMAT = "d/m/Y"
+
+# Manejo de archivos mutimedia
+MEDIA_URL = '/media/'
+DEFAULT_AVATAR = '/avatares/default.png'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

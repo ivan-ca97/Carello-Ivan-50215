@@ -10,7 +10,7 @@ class PerfilUsuario(models.Model):
     un User por defecto de Django. Con "on_delete" informo
     que de borrarse User, también debe borrarse el perfil
     '''
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Usuario')
 
     nombresPila = models.CharField(max_length=100, blank=True, verbose_name='Nombre/s de pila')
     apellido = models.CharField(max_length=100, blank=True, verbose_name='Apellido')
@@ -97,3 +97,11 @@ class Egreso(models.Model):
     class Meta:
         verbose_name = "Egreso"
         verbose_name_plural = "Egresos"
+
+        
+class Avatar(models.Model):
+    imagen = models.ImageField(upload_to="avatares")   
+    usuario = models.ForeignKey(PerfilUsuario, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.usuario} avatar: {self.imagen}"

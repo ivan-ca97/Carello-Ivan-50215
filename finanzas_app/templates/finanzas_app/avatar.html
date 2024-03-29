@@ -1,0 +1,49 @@
+{% extends 'finanzas_app/base/index.html' %} 
+{% load static %} 
+
+{% block content %}
+    <div class="container mt-5">
+        <img class="rounded-circle shadow-4-strong" alt="avatar2" src="{{ object.imagen.url }}" style="width: 200px; height: 200px; object-fit: cover;"/>
+        <br>
+        <br>
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+                {{ field }}
+                <br>
+                <button type="submit" class="btn btn-primary">Crear</button>
+            {% endfor%}
+        </form>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+{% endblock content %}

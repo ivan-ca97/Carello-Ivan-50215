@@ -10,60 +10,107 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import *
 
-#====================|CBV====================
-from django.views.generic import ListView
-from django.views.generic import CreateView
-from django.views.generic import UpdateView
-from django.views.generic import DeleteView
-#====================CBV|====================
+from django.conf import settings
 
 from django.http import HttpResponseForbidden
+import os
 
-# Create your views here.
+#====================|CBV====================
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+#====================CBV|====================
 
 def homeView(request):
     return render(request, 'base.html')
 
-@login_required(login_url='/login')
-def perfilView(request):
-    primerForm = PerfilForm(instance=request.user.perfilusuario)
-    contexto = {'perfilUsuario': request.user.perfilusuario, 'form': primerForm}
-    return render(request, 'perfil.html', contexto)
+#====================|Perfil====================#
+# Creo la clase PerfilCBV sólo por comodidad para programar
+class PerfilCBV:
+    class PerfilVer(LoginRequiredMixin, DetailView):
+        model = PerfilUsuario
+        template_name = 'finanzas_app/perfil.html'
+        fields = ['usuario', 'nombresPila', 'apellido', 'direccion', 'telefono']
 
-@login_required(login_url='/login')
-def perfilEditarView(request):
-    if request.method == 'POST':
-        # Obtengo el formulario que recibe el servidor
-        inputForm = PerfilForm(request.POST)
-        if inputForm.is_valid():
-            request.user.perfilusuario.nombresPila  = inputForm.cleaned_data.get('nombresPila')
-            request.user.perfilusuario.apellido     = inputForm.cleaned_data.get('apellido')
-            request.user.perfilusuario.direccion    = inputForm.cleaned_data.get('direccion')
-            request.user.perfilusuario.telefono     = inputForm.cleaned_data.get('telefono')
-            
-            request.user.perfilusuario.save()
+        def get_object(self, queryset=None):
+            '''
+            Devuelve el perfil de usuario asociado sin necesidad
+            de incluir el ID de la instancia del modelo en la URL
+            '''
 
-            print(inputForm.cleaned_data.get('nombresPila'))
-            print(inputForm.cleaned_data.get('apellido'))
-            print(inputForm.cleaned_data.get('direccion'))
-            print(inputForm.cleaned_data.get('telefono'))
+            # Creo el objeto que envio a la página, basicamente una lista
+            # con los campos que quiero mostrar (nombre del campo y valor)
+            try:
+                perfil = PerfilUsuario.objects.get(usuario=self.request.user)
 
-            replyForm = PerfilForm(instance=request.user.perfilusuario)
-            contexto = {'perfilUsuario': request.user.perfilusuario, 'form': replyForm}
-            return redirect(reverse_lazy('perfil'))
-        else:
-            print('Errors:', inputForm.errors)
-    else:
-        primerForm = PerfilForm(instance=request.user.perfilusuario)
-        contexto = {'perfilUsuario': request.user.perfilusuario, 'form': primerForm}
+            except: 
+                # Si falla porque no existía el avatar, creo uno
+                perfil = PerfilUsuario(usuario=self.request.user)
+                perfil.save()
+            object = []
+            for field in perfil._meta.fields:
+                # Excluyo el campo 'id' porque no quiero mostrarlo
+                if field.name != 'id':
+                    object.append((field.verbose_name, getattr(perfil, field.name)))
 
-        return render(request, 'perfil_editar.html', contexto)
+            return object
+
+    class PerfilUpdate(LoginRequiredMixin, UpdateView):
+        model = PerfilUsuario
+        form_class = PerfilForm
+        template_name = 'finanzas_app/perfil_editar.html'
+        success_url = reverse_lazy('perfil')
+        
+        def get_object(self, queryset=None):
+            return self.request.user.perfilusuario
+#====================Perfil|====================#
+
+#====================|Avatar====================#
+# Creo la clase AvatarCBV sólo por comodidad para programar
+class AvatarCBV:
+    class AvatarUpdate(LoginRequiredMixin, UpdateView):
+        model = Avatar
+        form_class = AvatarForm
+        template_name = 'finanzas_app/avatar.html'
+        success_url = reverse_lazy('perfil')
+        
+        def get_object(self, queryset=None):
+            perfil = self.request.user.perfilusuario
+
+            try:
+                avatar = Avatar.objects.get(usuario=perfil)
+            except: 
+                # Si falla porque no existía el avatar, creo uno
+                avatar = Avatar(usuario=perfil, imagen=settings.DEFAULT_AVATAR)
+                avatar.save()
+
+            print(perfil.id)
+            return avatar
+        
+        def form_valid(self, form):
+            perfil = self.request.user.perfilusuario
+
+            # Busco el avatar actual para borrarlo (salvo que sea el default)
+            avatar = Avatar.objects.get(usuario=perfil)
+
+            path = str(settings.BASE_DIR) + avatar.imagen.url
+            if os.path.isfile(path):
+                print(path)
+                os.remove(path)
+            print(path)
+
+            # Llamo al método base (Escribe en la DB)
+            respuesta = super().form_valid(form)
 
 
-def cuentasView(request):
-    return render(request, 'cuentas.html')
+            # Busco el avatar del perfil que está logueado 
+            avatar = Avatar.objects.get(usuario=perfil)
+            # Pongo el avatar en la sesión 
+            self.request.session["avatar"] = avatar.imagen.url
+            return respuesta
+
+#====================Avatar|====================#
 
 #====================|Egreso====================#
+# Creo la clase EgresoCBV sólo por comodidad para programar
 class EgresoCBV:
     class EgresoCrear(LoginRequiredMixin, CreateView):
         model = Egreso
@@ -432,27 +479,30 @@ class FormaDePagoCBV:
             return super().dispatch(request, *args, **kwargs)
 #====================Forma de pago|====================#
 
+#====================|Proveedores de pago====================#
+# Creo la clase ProveedoresPagoCBV sólo por comodidad para programar
+class ProveedoresPagoCBV:
+    class ProveedoresPagoList(ListView):
+        template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedores_de_pagos.html'
+        model = ProveedorPagos
 
-class ProveedoresPagoList(ListView):
-    template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedores_de_pagos.html'
-    model = ProveedorPagos
+    class ProveedoresPagoCrear(CreateView):
+        model = ProveedorPagos
+        form_class = ProveedorPagosForm
+        template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedor_de_pagos_crear.html'
+        success_url = reverse_lazy('proveedores_de_pagos')
+        
+    class ProveedoresPagoUpdate(UpdateView):
+        model = ProveedorPagos
+        form_class = ProveedorPagosForm
+        template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedor_de_pagos_editar.html'
+        success_url = reverse_lazy('proveedores_de_pagos')
 
-class ProveedoresPagoCrear(CreateView):
-    model = ProveedorPagos
-    form_class = ProveedorPagosForm
-    template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedor_de_pagos_crear.html'
-    success_url = reverse_lazy('proveedores_de_pagos')
-    
-class ProveedoresPagoUpdate(UpdateView):
-    model = ProveedorPagos
-    form_class = ProveedorPagosForm
-    template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedor_de_pagos_editar.html'
-    success_url = reverse_lazy('proveedores_de_pagos')
-
-class ProveedoresPagoDelete(DeleteView):
-    model = ProveedorPagos
-    template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedor_de_pagos_eliminar.html'
-    success_url = reverse_lazy('proveedores_de_pagos')
+    class ProveedoresPagoDelete(DeleteView):
+        model = ProveedorPagos
+        template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedor_de_pagos_eliminar.html'
+        success_url = reverse_lazy('proveedores_de_pagos')
+#====================Proveedores de pago|====================#
 
 
 class Authentication:
@@ -469,6 +519,8 @@ class Authentication:
                 userName        = form.cleaned_data.get('username')
                 userPassword    = form.cleaned_data.get('password')
                 
+                request.session["avatar"] = settings.MEDIA_URL + settings.DEFAULT_AVATAR
+
                 user = authenticate(request, username=userName, password=userPassword)
                 if user is not None:
                     login(request, user)
@@ -493,8 +545,18 @@ class Authentication:
 
             if form.is_valid():
                 nuevoUsuario = form.save()
-                PerfilUsuario(usuario = nuevoUsuario).save()
-                login(request, nuevoUsuario)
+                try:
+                    perfil = PerfilUsuario(usuario = nuevoUsuario)
+
+                    perfil.save()
+                    
+                    login(request, nuevoUsuario)
+                    request.session["avatar"] = settings.DEFAULT_AVATAR
+                except:
+                    nuevoUsuario.delete()
+                    if perfil:
+                        perfil.delete()
+
                 return redirect(reverse_lazy('home'))
             else:
                 pass

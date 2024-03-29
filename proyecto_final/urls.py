@@ -19,8 +19,14 @@ from django.urls import path, include
 
 from finanzas_app.urls import *
 
+from django.conf.urls.static import static
+from . import settings
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', include('finanzas_app.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -10,8 +10,10 @@ urlpatterns = [
     path('login', Authentication.logInView, name = "login"),
     path('signup', Authentication.signUpView, name = "signup"),
 
-    path('perfil', perfilView, name = "perfil"),
-    path('perfil_editar', perfilEditarView, name = "perfil_editar"),
+    path('perfil', PerfilCBV.PerfilVer.as_view(), name = "perfil"),
+    path('perfil_editar', PerfilCBV.PerfilUpdate.as_view(), name = "perfil_editar"),
+
+    path('avatar', AvatarCBV.AvatarUpdate.as_view(), name='avatar'),
 
     path('cuentas', CuentaCBV.CuentasList.as_view(), name = "cuentas"),
     path('cuenta_crear', CuentaCBV.CuentaCrear.as_view(), name = "cuenta_crear"),
@@ -41,9 +43,9 @@ urlpatterns = [
 
 
 
-    path('proveedores_de_pagos', ProveedoresPagoList.as_view(), name = "proveedores_de_pagos"),
-    path('proveedor_de_pagos_crear', ProveedoresPagoCrear.as_view(), name="proveedor_de_pagos_crear"),
-    path('proveedor_de_pagos_eliminar/<int:pk>/', ProveedoresPagoDelete.as_view(), name = "proveedor_de_pagos_eliminar"),
-    path('proveedor_de_pagos_editar/<int:pk>/', ProveedoresPagoUpdate.as_view(), name="proveedor_de_pagos_editar" ),
+    path('proveedores_de_pagos', ProveedoresPagoCBV.ProveedoresPagoList.as_view(), name = "proveedores_de_pagos"),
+    path('proveedor_de_pagos_crear', ProveedoresPagoCBV.ProveedoresPagoCrear.as_view(), name="proveedor_de_pagos_crear"),
+    path('proveedor_de_pagos_eliminar/<int:pk>/', ProveedoresPagoCBV.ProveedoresPagoDelete.as_view(), name = "proveedor_de_pagos_eliminar"),
+    path('proveedor_de_pagos_editar/<int:pk>/', ProveedoresPagoCBV.ProveedoresPagoUpdate.as_view(), name="proveedor_de_pagos_editar" ),
     #path('perfilusuario/<int:pk>/', MyModelDetailView.as_view(), name = "perfil"),
 ]
