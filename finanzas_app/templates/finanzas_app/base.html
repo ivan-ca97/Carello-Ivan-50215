@@ -1,3 +1,16 @@
 
 {% extends 'finanzas_app/base/index.html' %} 
 {% load static %} 
+
+{% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <h1 class="mt-4">Pagina principal</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Explore el menú a la izquierda para ver las opciones</li>
+    </ol>
+    <img src="https://static.vecteezy.com/system/resources/previews/011/787/631/non_2x/growing-profit-graph-free-png.png" style="width: 500px; height: 500px; object-fit: cover;"/>
+{% endblock content %}

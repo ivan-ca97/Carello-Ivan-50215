@@ -7,6 +7,10 @@
             <div class="col mt-4">
                 <h1 class="mt-4">Tu perfil</h1>
                 <a class="btn btn-primary" href="{% url 'perfil_editar' %}">Editar</a>
+                <a class="btn btn-primary" href="{% url 'cambiar_password' %}">Cambiar Contraseña</a>
+                {% if user.is_superuser %}
+                    <a class="btn btn-warning" href="{% url 'admin:index' %}">Admin</a>
+                {% endif %}
             </div>
             <div class="col mt-4">
                 <a href="{% url 'avatar' %}">
@@ -32,35 +36,4 @@
             {% endfor%}
         </div>
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 {% endblock content %}

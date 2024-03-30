@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from .models import PerfilUsuario, ProveedorPagos, Cuenta, FormaDePago, Ingreso, Egreso, Avatar
 
 
@@ -15,6 +15,23 @@ class AvatarForm(forms.ModelForm):
                 'type': 'file',
             }),
         }
+
+class CambiarPasswordForm(PasswordChangeForm):
+    old_password = forms.CharField(required = True, label="Contraseña actual", widget = forms.PasswordInput(attrs={
+        'class': 'form-control',
+        'placeholder': '',
+        'type': 'password'
+    }))
+    new_password1 = forms.CharField(required = True, label="Contraseña nueva", widget = forms.PasswordInput(attrs={
+        'class': 'form-control',
+        'placeholder': '',
+        'type': 'password'
+    }))
+    new_password2 = forms.CharField(required = True, label="Confirmar contraseña", widget = forms.PasswordInput(attrs={
+        'class': 'form-control',
+        'placeholder': '',
+        'type': 'password'
+    }))
 
 class LogInForm(AuthenticationForm):
     username = forms.CharField(required = True, label="Nombre de usuario", widget=forms.TextInput(attrs={
@@ -88,6 +105,16 @@ class ProveedorPagosForm(forms.ModelForm):
         }
 
 class PerfilForm(forms.ModelForm):
+    baseUsername = forms.CharField(required = True, label="Nombre de usuario", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'type': 'text',
+    }))
+
+    baseEmail = forms.EmailField(required = True, label="E-Mail", widget=forms.EmailInput(attrs={
+        'class': 'form-control',
+        'type': 'email'
+    }))
+
     class Meta:
         model = PerfilUsuario
         fields = ["nombresPila", "apellido", "direccion", "telefono"]

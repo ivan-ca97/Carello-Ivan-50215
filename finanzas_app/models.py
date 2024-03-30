@@ -45,6 +45,24 @@ class Cuenta(models.Model):
     proveedorPagos = models.ForeignKey(ProveedorPagos, on_delete=models.CASCADE, verbose_name='Proveedor de pagos')
     reservas = models.FloatField()
     usuario = models.ForeignKey(PerfilUsuario, on_delete=models.CASCADE, verbose_name='Usuario')
+    
+    def actualizarReservas(self):
+
+        ingresos = Ingreso.objects.filter(cuenta=self)
+        egresos = Egreso.objects.filter(formaDePago__in=FormaDePago.objects.filter(cuenta=self))
+
+        ingresosMonto = []
+        egresosMonto = []
+        for ingreso in ingresos:
+            ingresosMonto.append(ingreso.monto)
+        for egreso in egresos:
+            egresosMonto.append(egreso.monto)
+
+        self.reservas = sum(ingresosMonto) - sum(egresosMonto)
+        self.save()
+        print(f'Ingresos: {sum(ingresosMonto)}')
+        print(f'Egresos: {sum(egresosMonto)}')
+        print(f'{self.reservas}')
 
     class Meta:
         verbose_name = "Cuenta"
@@ -97,7 +115,6 @@ class Egreso(models.Model):
     class Meta:
         verbose_name = "Egreso"
         verbose_name_plural = "Egresos"
-
         
 class Avatar(models.Model):
     imagen = models.ImageField(upload_to="avatares")   

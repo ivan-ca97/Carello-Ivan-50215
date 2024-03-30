@@ -8,7 +8,19 @@
         <h1 class="mt-4">Mis egresos</h1>
         <div class="container">
             <a class="btn btn-primary" href="{% url 'egreso_crear' %}">Nuevo</a>    
-        </div>           
+        </div>      
+
+        <form class="mt-4" method="get">
+            <div class="row">
+                <div class="col">
+                    <input type="number" step="any" class="form-control" placeholder="Buscar ingreso mayor a..." name="montoMin"  value="{{ request.GET.q }}">
+                </div>
+                <div class="col">
+                    <button class="btn btn-warning" type="submit">Buscar</button>
+                </div>
+            </div>
+        </form>  
+        
         <div class="row mt-4">
             <table class="table">
                 <thead>
@@ -24,8 +36,8 @@
                     {% for egreso in egreso_list %}
                         <tr>
                             <td>{{ egreso.fecha }}</td>
-                            <td>{{ egreso.monto }}</td>
-                            <td>{{ egreso.cuenta }}</td>
+                            <td>${{ egreso.monto }}</td>
+                            <td>{{ egreso.formaDePago }}</td>
                             <td>{{ egreso.descripcion }}</td>
                             <td>
                                 <a type="button" class="btn btn-primary btn-sm mx-2" href="{% url 'egreso_editar' egreso.id %}">
@@ -41,37 +53,4 @@
               </table>
         </div>
     </div>
-
-
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 {% endblock content %}

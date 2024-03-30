@@ -132,5 +132,5 @@ DATE_FORMAT = "d/m/Y"
 
 # Manejo de archivos mutimedia
 MEDIA_URL = '/media/'
-DEFAULT_AVATAR = '/avatares/default.png'
+DEFAULT_AVATAR = 'avatares/default.png'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

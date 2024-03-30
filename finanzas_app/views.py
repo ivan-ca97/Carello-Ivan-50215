@@ -13,14 +13,22 @@ from .models import *
 from django.conf import settings
 
 from django.http import HttpResponseForbidden
-import os
 
 #====================|CBV====================
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.contrib.auth.views import PasswordChangeView
+
+from .mixins import SuperUserRequiredMixin
 #====================CBV|====================
+
+import os
+import datetime
 
 def homeView(request):
     return render(request, 'base.html')
+
+def aboutMeView(request):
+    return render(request, 'aboutme.html')
 
 #====================|Perfil====================#
 # Creo la clase PerfilCBV sólo por comodidad para programar
@@ -51,6 +59,7 @@ class PerfilCBV:
                 if field.name != 'id':
                     object.append((field.verbose_name, getattr(perfil, field.name)))
 
+            object.append(('email', self.request.user.email))
             return object
 
     class PerfilUpdate(LoginRequiredMixin, UpdateView):
@@ -59,8 +68,42 @@ class PerfilCBV:
         template_name = 'finanzas_app/perfil_editar.html'
         success_url = reverse_lazy('perfil')
         
-        def get_object(self, queryset=None):
+        def get_initial(self):
+            formInicial = super().get_initial()
+
+            # Incluyo la información de User en el formulario
+            formInicial['baseUsername'] = self.request.user.username
+            formInicial['baseEmail'] = self.request.user.email
+            
+            return formInicial
+    
+        def get_object(self, queryset=None):   
+            # Le paso el objeto que representa al perfil
             return self.request.user.perfilusuario
+        
+        def form_valid(self, form):
+            username = form.cleaned_data['baseUsername']
+            email = form.cleaned_data['baseEmail']
+
+            userActual = self.request.user
+
+            userActual.username = username
+            userActual.email = email
+
+            try:
+                userActual.save()
+            except:
+                form.add_error(None, "Email o nombre de usuario inválido")
+                return self.form_invalid(form)
+
+            return super().form_valid(form)
+
+
+
+    class CambiarPassword(LoginRequiredMixin, PasswordChangeView):
+        form_class = CambiarPasswordForm
+        template_name = 'finanzas_app/cambiar_password.html'
+        success_url = reverse_lazy('perfil')
 #====================Perfil|====================#
 
 #====================|Avatar====================#
@@ -144,7 +187,7 @@ class EgresoCBV:
                 cuenta = form.instance.formaDePago.cuenta
 
             respuesta = super().form_valid(form)
-            CuentaCBV.actualizarReservasCuenta(cuenta)
+            cuenta.actualizarReservas()
             return respuesta
         
     class EgresoDelete(LoginRequiredMixin, DeleteView):
@@ -160,7 +203,7 @@ class EgresoCBV:
             # ...continuo con la ejecución normal (borra el egreso)...
             respuesta = super().form_valid(form)
             #...Recalcula el total
-            CuentaCBV.actualizarReservasCuenta(cuenta)
+            cuenta.actualizarReservas()
             return respuesta
 
         def dispatch(self, request, *args, **kwargs):
@@ -188,7 +231,7 @@ class EgresoCBV:
             # ...continuo con la ejecución normal (edita el egreso)...
             respuesta = super().form_valid(form)
             #...Recalcula el total
-            CuentaCBV.actualizarReservasCuenta(cuenta)
+            cuenta.actualizarReservas()
             return respuesta
         
         def dispatch(self, request, *args, **kwargs):
@@ -207,10 +250,17 @@ class EgresoCBV:
         model = Egreso
 
         def get_queryset(self):
-            '''
-            Sólo devuelve lo correspondiente al usuario actual
-            '''
-            return Egreso.objects.filter(usuario=self.request.user.perfilusuario)
+            # Busca los egresos correspondientes al usuario actual 
+            egresos = Egreso.objects.filter(usuario=self.request.user.perfilusuario)
+            # Obtiene el valor ingresado como busqueda
+            montoMin = self.request.GET.get('montoMin')
+
+            if montoMin:
+                # Filtro encontrando aquellos montos mayores a 'montoMin'
+                print(montoMin)
+                return egresos.filter(monto__gte=montoMin)
+            
+            return egresos
 #====================Egreso|====================#
 
 #====================|Ingreso====================#
@@ -242,12 +292,8 @@ class IngresoCBV:
             '''
             form.instance.usuario = self.request.user.perfilusuario
 
-            # Actualizo las reservas de la cuenta 
-            form.instance.cuenta.reservas += form.instance.monto
-            form.instance.cuenta.save()
-
             respuesta = super().form_valid(form)
-            CuentaCBV.actualizarReservasCuenta(form.instance.cuenta)
+            form.instance.cuenta.actualizarReservas()
             return respuesta
         
     class IngresoDelete(LoginRequiredMixin, DeleteView):
@@ -261,7 +307,7 @@ class IngresoCBV:
             # ...continuo con la ejecución normal (borra el ingreso)...
             respuesta = super().form_valid(form)
             #...Recalcula el total
-            CuentaCBV.actualizarReservasCuenta(cuenta)
+            cuenta.actualizarReservas()
             return respuesta
 
         def dispatch(self, request, *args, **kwargs):
@@ -287,7 +333,7 @@ class IngresoCBV:
             # ...continuo con la ejecución normal (edita el ingreso)...
             respuesta = super().form_valid(form)
             #...Recalcula el total
-            CuentaCBV.actualizarReservasCuenta(cuenta)
+            cuenta.actualizarReservas()
             return respuesta
         
         def dispatch(self, request, *args, **kwargs):
@@ -306,29 +352,22 @@ class IngresoCBV:
         model = Ingreso
 
         def get_queryset(self):
-            '''
-            Sólo devuelve lo correspondiente al usuario actual
-            '''
-            return Ingreso.objects.filter(usuario=self.request.user.perfilusuario)
+            # Busca los ingresos correspondientes al usuario actual 
+            ingresos = Ingreso.objects.filter(usuario=self.request.user.perfilusuario)
+            # Obtiene el valor ingresado como busqueda
+            montoMin = self.request.GET.get('montoMin')
+
+            if montoMin:
+                # Filtro encontrando aquellos montos mayores a 'montoMin'
+                return ingresos.filter(monto__gte=montoMin)
+            
+            return ingresos
+        
 #====================Ingreso|====================#
 
 #====================|Cuenta====================#
 # Creo la clase CuentaCBV sólo por comodidad para programar
 class CuentaCBV:
-    def actualizarReservasCuenta(cuenta):
-        if cuenta != None: 
-            ingresos = Ingreso.objects.filter(cuenta=cuenta)
-            egresos = Egreso.objects.filter(formaDePago__in=FormaDePago.objects.filter(cuenta=cuenta))
-        else:
-            ingresos = None
-            egresos = None
-        print('Ingresos:')
-        for ingreso in ingresos:
-            print(ingreso.monto)
-        print('Egresos:')
-        for egreso in egresos:
-            print(egreso.monto)
-
     class CuentaCrear(LoginRequiredMixin, CreateView):
         model = Cuenta
         form_class = CuentaForm
@@ -350,8 +389,17 @@ class CuentaCBV:
             while form.instance.nombreAlias in Cuenta.objects.filter(usuario=self.request.user.perfilusuario).values_list('nombreAlias', flat=True):
                 form.instance.nombreAlias = alias + f'_{i}'
                 i += 1
-
-            return super().form_valid(form)
+            
+            respuesta = super().form_valid(form)
+            reservas = form.cleaned_data.get('reservas')
+            # Creo un ingreso con las reservas iniciales
+            Ingreso(cuenta=self.object,
+                    usuario=self.request.user.perfilusuario,
+                    monto=self.object.reservas,
+                    fecha=datetime.date.today(),
+                    descripcion=f'Ingreso inicial cuenta {self.object}'
+                    ).save()
+            return respuesta
         
     class CuentaDelete(LoginRequiredMixin, DeleteView):
         model = Cuenta
@@ -375,6 +423,17 @@ class CuentaCBV:
         template_name = 'finanzas_app/class_based_views/cuentas/cuenta_editar.html'
         success_url = reverse_lazy('cuentas')
 
+        def get_form(self, form_class=None):
+            '''
+            De esta forma, quito el campo 'reservas' para
+            que no aparezca en la edición (pues se modifica
+            con ingresos o egresos, no directamente)
+            '''
+            form = super().get_form(form_class)
+            form.fields.pop('reservas', None)
+
+            return form
+    
         def dispatch(self, request, *args, **kwargs):
             '''
             Verifica que pertenezca al usuario actual para
@@ -385,6 +444,7 @@ class CuentaCBV:
                 return HttpResponseForbidden("No puede editar esta cuenta.")
             
             return super().dispatch(request, *args, **kwargs)
+        
 
     class CuentasList(LoginRequiredMixin, ListView):
         template_name = 'finanzas_app/class_based_views/cuentas/cuentas.html'
@@ -486,19 +546,19 @@ class ProveedoresPagoCBV:
         template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedores_de_pagos.html'
         model = ProveedorPagos
 
-    class ProveedoresPagoCrear(CreateView):
+    class ProveedoresPagoCrear(SuperUserRequiredMixin, CreateView):
         model = ProveedorPagos
         form_class = ProveedorPagosForm
         template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedor_de_pagos_crear.html'
         success_url = reverse_lazy('proveedores_de_pagos')
         
-    class ProveedoresPagoUpdate(UpdateView):
+    class ProveedoresPagoUpdate(SuperUserRequiredMixin, UpdateView):
         model = ProveedorPagos
         form_class = ProveedorPagosForm
         template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedor_de_pagos_editar.html'
         success_url = reverse_lazy('proveedores_de_pagos')
 
-    class ProveedoresPagoDelete(DeleteView):
+    class ProveedoresPagoDelete(SuperUserRequiredMixin, DeleteView):
         model = ProveedorPagos
         template_name = 'finanzas_app/class_based_views/proveedores_de_pago/proveedor_de_pagos_eliminar.html'
         success_url = reverse_lazy('proveedores_de_pagos')
@@ -551,7 +611,7 @@ class Authentication:
                     perfil.save()
                     
                     login(request, nuevoUsuario)
-                    request.session["avatar"] = settings.DEFAULT_AVATAR
+                    request.session["avatar"] = settings.MEDIA_URL + settings.DEFAULT_AVATAR
                 except:
                     nuevoUsuario.delete()
                     if perfil:

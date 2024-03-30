@@ -4,7 +4,10 @@ from .views import *
 
 urlpatterns = [
     path('', homeView, name = "home"),
+    path('aboutme', aboutMeView, name = "aboutme"),
 
+
+    path('cambiar_password', PerfilCBV.CambiarPassword.as_view(), name = "cambiar_password"),
 
     path('logout', Authentication.logOutView, name = "logout"),
     path('login', Authentication.logInView, name = "login"),
