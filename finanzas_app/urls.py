@@ -38,14 +38,6 @@ urlpatterns = [
     path('egreso_editar/<int:pk>/', EgresoCBV.EgresoUpdate.as_view(), name = "egreso_editar"),
     path('egreso_eliminar/<int:pk>/', EgresoCBV.EgresoDelete.as_view(), name = "egreso_eliminar"),
 
-
-
-
-
-
-
-
-
     path('proveedores_de_pagos', ProveedoresPagoCBV.ProveedoresPagoList.as_view(), name = "proveedores_de_pagos"),
     path('proveedor_de_pagos_crear', ProveedoresPagoCBV.ProveedoresPagoCrear.as_view(), name="proveedor_de_pagos_crear"),
     path('proveedor_de_pagos_eliminar/<int:pk>/', ProveedoresPagoCBV.ProveedoresPagoDelete.as_view(), name = "proveedor_de_pagos_eliminar"),

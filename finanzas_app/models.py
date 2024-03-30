@@ -101,6 +101,7 @@ class Ingreso(models.Model):
     class Meta:
         verbose_name = "Ingreso"
         verbose_name_plural = "Ingresos"
+        ordering = ["-fecha"]
 
     def __str__(self):
         return f'{self.usuario} - ${self.monto}'
@@ -115,6 +116,9 @@ class Egreso(models.Model):
     class Meta:
         verbose_name = "Egreso"
         verbose_name_plural = "Egresos"
+        ordering = ["-fecha"]
+    def __str__(self):
+        return f'{self.usuario} - ${self.monto}'
         
 class Avatar(models.Model):
     imagen = models.ImageField(upload_to="avatares")   

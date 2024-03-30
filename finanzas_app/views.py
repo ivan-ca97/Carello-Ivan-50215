@@ -50,7 +50,7 @@ class PerfilCBV:
                 perfil = PerfilUsuario.objects.get(usuario=self.request.user)
 
             except: 
-                # Si falla porque no existía el avatar, creo uno
+                # Si falla porque no existía el perfil de usuario, creo uno
                 perfil = PerfilUsuario(usuario=self.request.user)
                 perfil.save()
             object = []
@@ -135,11 +135,12 @@ class AvatarCBV:
             avatar = Avatar.objects.get(usuario=perfil)
 
             path = str(settings.BASE_DIR) + avatar.imagen.url
-            if os.path.isfile(path):
+            defaultPath = str(settings.BASE_DIR) +settings.MEDIA_URL + settings.DEFAULT_AVATAR
+            if os.path.isfile(path) and path != defaultPath:
                 print(path)
                 os.remove(path)
-            print(path)
 
+            print(defaultPath)
             # Llamo al método base (Escribe en la DB)
             respuesta = super().form_valid(form)
 
@@ -579,17 +580,21 @@ class Authentication:
                 userName        = form.cleaned_data.get('username')
                 userPassword    = form.cleaned_data.get('password')
                 
-                request.session["avatar"] = settings.MEDIA_URL + settings.DEFAULT_AVATAR
-
                 user = authenticate(request, username=userName, password=userPassword)
                 if user is not None:
                     login(request, user)
-                    return redirect(reverse_lazy('home'))
+
+                try:
+                    avatarUrl = Avatar.objects.get(usuario=user.perfilusuario).imagen.url
+                except: 
+                    # Si falla porque no existía el avatar
+                    avatarUrl = settings.MEDIA_URL + settings.DEFAULT_AVATAR
+                    
+                request.session["avatar"] = avatarUrl
+
+                return redirect(reverse_lazy('home'))
 
 
-                print("...", userName)
-                print("...", userPassword)
-                print("Errors...", form.errors)
 
             return render(request, 'authenticate.html', {'form': form, 'login_attempt': True, 'failed': True})
 
@@ -611,6 +616,7 @@ class Authentication:
                     perfil.save()
                     
                     login(request, nuevoUsuario)
+                    
                     request.session["avatar"] = settings.MEDIA_URL + settings.DEFAULT_AVATAR
                 except:
                     nuevoUsuario.delete()

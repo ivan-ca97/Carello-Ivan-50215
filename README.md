@@ -1,4 +1,18 @@
 # Proyecto final Django Iván Carello
+Video explicativo:
+https://www.youtube.com/watch?v=cG55GDKW7Uo&ab_channel=IVAN3DX
+
+## Superuser
+Username: ivan
+
+Contraseña: 1234
+
+## Usuarios 'normales' con información cargada
+Username: ivan_coderhouse
+Contraseña: 123456__
+
+Username: coder_ivan
+Contraseña: 123456__
 
 ## Objetivo de la aplicación
 
@@ -29,7 +43,3 @@ El modelo simplemente representa la imágen que corresponde a cada usuario.
 ## Funcionalidades no implementadas
 Al plantear el proyecto se consideró la idea de manejar los datos con tarjeta de crédito, informando las tarjetas de cada usuario, resumenes, fechas de cierre y vencimiento... pero debido al incremento del alcance que ello representa y la complejidad, se decidió no implementarlo. 
 
-## Superuser
-Username: ivan
-
-Contraseña: vivapython

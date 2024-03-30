@@ -178,7 +178,7 @@ class IngresoForm(forms.ModelForm):
                 'class': 'form-control',
                 'type': 'date',
             }),
-            'descripción': forms.TextInput(attrs={
+            'descripcion': forms.TextInput(attrs={
                 'class': 'form-control',
                 'type': 'text',
             }),
@@ -214,7 +214,7 @@ class EgresoForm(forms.ModelForm):
                 'class': 'form-control',
                 'type': 'date',
             }),
-            'descripción': forms.TextInput(attrs={
+            'descripcion': forms.TextInput(attrs={
                 'class': 'form-control',
                 'type': 'text',
             }),
